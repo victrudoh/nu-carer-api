@@ -25,20 +25,15 @@ const userSchema = new Schema(
       min: 6,
       max: 1024,
     },
-    media: {
-      type: String,
-      default: "",
-      required: false,
-    },
     role: {
       type: String,
-      default: 'user'
-    //   required: true,
+      required: true,
+      default: "user",
     },
     date: {
-        type: Date,
-        default: Date.now,
-    }
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
