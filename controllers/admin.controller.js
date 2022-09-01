@@ -168,7 +168,7 @@ module.exports = {
         return res.status(500).send({
           success: false,
           message: "ID didn't match a resident",
-          errMessage: err.message,
+          // errMessage: err.message,
         });
       }
 
@@ -191,7 +191,7 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't edit resident",
-        errMessage: err.message,
+        // errMessage: err.message,
       });
     }
   },
