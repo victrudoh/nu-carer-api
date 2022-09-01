@@ -10,6 +10,7 @@ const {
   signUpValidation,
   loginValidation,
 } = require("../middlewares/validate");
+
 module.exports = {
   //   Test API connection
   getPingController: (req, res) => {
@@ -26,10 +27,10 @@ module.exports = {
     }
   },
 
-  //   SignUp
-  postSignUpController: async (req, res, next) => {
+  //   Register
+  postRegisterController: async (req, res, next) => {
     try {
-      const { username, email, password, role } = req.body;
+      const { firstName, lastName, userName, email, password, role } = req.body;
 
       const body = { ...req.body };
 
@@ -51,7 +52,9 @@ module.exports = {
 
       // create user
       const user = new User({
-        username,
+        firstName,
+        lastName,
+        userName,
         email,
         password: hashedPassword,
         role,
@@ -76,20 +79,20 @@ module.exports = {
   // Login
   postLoginController: async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const { userName, password } = req.body;
 
       // Run Hapi/Joi validation
       const { error } = await loginValidation.validateAsync(req.body);
       if (error) return res.status(400).send(error.details[0].message);
 
       //   check if user exist
-      const user = await User.findOne({ email: email });
-      if (!user) return res.status(400).send("Invalid email or password");
+      const user = await User.findOne({ userName });
+      if (!user) return res.status(400).send("Invalid username or password");
 
       // validate password
       const validatePassword = await bcrypt.compare(password, user.password);
       if (!validatePassword)
-        return res.status(400).send("Invalid email or password");
+        return res.status(400).send("Invalid username or password");
 
       //   Generate JWT Token
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);

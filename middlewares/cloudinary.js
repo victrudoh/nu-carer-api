@@ -18,24 +18,20 @@ const uploadImageSingle = async (req, res, next) => {
         const result = await uploader.upload(file, {
           public_id: `Damaged-${Date.now()}`,
         });
-        console.log("result.url", result.url)
+        console.log("result.url.cloudinary: ", result.url);
         return result.url;
       } else {
-        return (
-          res.status(500).send({
-            success: false,
-            message: "Invalid file format. Only .png, .jpg and .jpeg formats are allowed!"
-          })
-        );
-        
+        return res.status(500).send({
+          success: false,
+          message:
+            "Invalid file format. Only .png, .jpg and .jpeg formats are allowed!",
+        });
       }
     } else {
-      return (
-        res.status(500).send({
-          success: false,
-          message: "No file sent"
-        })
-      );
+      return res.status(500).send({
+        success: false,
+        message: "No file sent",
+      });
     }
   } catch (err) {
     console.log(err);

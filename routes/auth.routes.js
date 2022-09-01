@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Routes
 router.get("/ping", auth.getPingController);
-router.post("/register", auth.postSignUpController);
+router.post("/register", auth.postRegisterController);
 router.post("/login", auth.postLoginController);
 
 module.exports = router;
