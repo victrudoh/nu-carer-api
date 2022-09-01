@@ -27,7 +27,7 @@ const caregiverSchema = new Schema(
       type: String,
       required: true,
     },
-    media: {
+    image: {
       type: String,
       required: true,
     },
@@ -40,9 +40,12 @@ const caregiverSchema = new Schema(
       required: true,
       default: "care-giver",
     },
-    date: {
-      type: Date,
-      default: Date.now,
+    dateCreated: {
+      type: String,
+    },
+    dateModified: {
+      type: String,
+      default: "Not modified",
     },
   },
   {

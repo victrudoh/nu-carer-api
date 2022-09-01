@@ -53,7 +53,10 @@ module.exports = {
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
 
-      const date = moment().tz("Africa/Lagos").format("YYYY-MM-DD HH:MM:SS");
+      // date
+      const dateCreated = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:MM:SS");
 
       // create resident
       const resident = new Resident({
@@ -62,7 +65,7 @@ module.exports = {
         contact,
         careplan,
         image,
-        date,
+        dateCreated,
       });
       await resident.save();
 
@@ -74,7 +77,7 @@ module.exports = {
         },
       });
     } catch (err) {
-      console.log("postCreateResidentController: ~ err", err);
+      console.log("postCreateResidentController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't create resident",
@@ -161,6 +164,11 @@ module.exports = {
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
 
+      // date
+      const dateModified = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:MM:SS");
+
       const resident = await Resident.findById({ _id: id });
 
       //   if no resident was found
@@ -177,6 +185,7 @@ module.exports = {
       resident.contact = contact;
       resident.careplan = careplan;
       resident.image = image;
+      resident.dateModified = dateModified;
       await resident.save();
 
       return res.status(200).send({
@@ -214,7 +223,7 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: "Deleted a resident successfully",
+        message: `Deleted resident ${resident.name} successfully`,
       });
     } catch (err) {
       return res.status(500).send({
@@ -233,7 +242,7 @@ module.exports = {
 
   //***** CARE GIVERS *****//
   //   create care givers
-  postCreateCaregiverController: async (req, res) => {
+  postCreateCaregiverController: async (req, res, next) => {
     try {
       const { name, email, phone, sex, address, licenseNo } = req.body;
 
@@ -248,6 +257,11 @@ module.exports = {
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
 
+      // date
+      const dateCreated = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:MM:SS");
+
       // create resident
       const caregiver = new Caregiver({
         name,
@@ -257,8 +271,11 @@ module.exports = {
         address,
         licenseNo,
         image,
+        dateCreated,
       });
       await caregiver.save();
+
+      console.log("Care giver added");
 
       return res.status(200).send({
         success: true,
@@ -268,10 +285,11 @@ module.exports = {
         },
       });
     } catch (err) {
+      console.log("postCreateCaregiverController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't create Care giver",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
@@ -311,10 +329,10 @@ module.exports = {
   //   find all caregivers
   getAllCaregiversController: async (req, res) => {
     try {
-      const caregiver = await Caregiver.find();
+      const caregivers = await Caregiver.find();
 
       //   if no resident was found
-      if (!caregiver) {
+      if (!caregivers) {
         return res.status(500).send({
           success: false,
           message: "No care givers",
@@ -325,7 +343,8 @@ module.exports = {
       return res.status(200).send({
         success: true,
         message: "Fetched care giver",
-        data: caregiver,
+        length: caregivers.length,
+        data: caregivers,
       });
     } catch (err) {
       return res.status(500).send({
@@ -337,8 +356,9 @@ module.exports = {
   },
 
   // edit care giver
-  postEditCaregiverController: async (req, res) => {
+  postEditCaregiverController: async (req, res, next) => {
     try {
+      const { id } = req.query;
       const { name, email, phone, sex, address, licenseNo } = req.body;
 
       const { media } = req.file;
@@ -351,6 +371,11 @@ module.exports = {
 
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
+
+      // date
+      const dateModified = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:MM:SS");
 
       const caregiver = await Caregiver.findById({ _id: id });
 
@@ -369,8 +394,11 @@ module.exports = {
       caregiver.sex = sex;
       caregiver.address = address;
       caregiver.licenseNo = licenseNo;
-      caregiver.media = image;
+      caregiver.image = image;
+      caregiver.dateModified = dateModified;
       await caregiver.save();
+
+      console.log(`Edited care giver ${caregiver.name} successfully`);
 
       return res.status(200).send({
         success: true,
@@ -380,6 +408,7 @@ module.exports = {
         },
       });
     } catch (err) {
+      console.log("postEditCaregiverController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't edit care giver",

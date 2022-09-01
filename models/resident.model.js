@@ -32,8 +32,12 @@ const residentSchema = new Schema(
       required: true,
       default: "resident",
     },
-    date: {
+    dateCreated: {
       type: String,
+    },
+    dateModified: {
+      type: String,
+      default: "Not modified",
     },
   },
   {

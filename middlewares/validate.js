@@ -35,7 +35,7 @@ const caregiverValidation = Joi.object({
   address: Joi.string().required(),
   licenseNo: Joi.string().required(),
   role: Joi.string(),
-  media: Joi.object().required(),
+  media: Joi.object(),
 });
 
 module.exports = {
