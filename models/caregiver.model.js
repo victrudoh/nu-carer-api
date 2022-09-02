@@ -19,7 +19,7 @@ const caregiverSchema = new Schema(
       type: String,
       required: true,
     },
-    sex: {
+    gender: {
       type: String,
       required: true,
     },
@@ -27,7 +27,7 @@ const caregiverSchema = new Schema(
       type: String,
       required: true,
     },
-    image: {
+    media: {
       type: String,
       required: true,
     },
@@ -45,7 +45,7 @@ const caregiverSchema = new Schema(
     },
     dateModified: {
       type: String,
-      default: "Not modified",
+      default: "un-modified",
     },
   },
   {

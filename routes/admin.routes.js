@@ -15,6 +15,12 @@ const router = express.Router();
 // Routes
 router.get("/ping", admin.getPingController);
 
+//   *
+//   **
+//   ***
+//   **
+//   *
+
 // RESIDENTS
 router.post(
   "/resident/add",
@@ -30,6 +36,12 @@ router.post(
 );
 router.delete("/resident/delete", admin.deleteResidentController);
 
+//   *
+//   **
+//   ***
+//   **
+//   *
+
 // CAREGIVERS
 router.post(
   "/caregiver/add",
@@ -44,5 +56,14 @@ router.post(
   admin.postEditCaregiverController
 );
 router.delete("/caregiver/delete", admin.deleteCaregiverController);
+
+//   *
+//   **
+//   ***
+//   **
+//   *
+
+// CAREPLAN
+router.post("/careplan/add", admin.postCreateCarePlanController);
 
 module.exports = router;

@@ -31,7 +31,7 @@ const caregiverValidation = Joi.object({
   name: Joi.string().min(4).required(),
   email: Joi.string().min(6).required().email(),
   phone: Joi.string().min(4).required(),
-  sex: Joi.string().required(),
+  gender: Joi.string().required(),
   address: Joi.string().required(),
   licenseNo: Joi.string().required(),
   role: Joi.string(),

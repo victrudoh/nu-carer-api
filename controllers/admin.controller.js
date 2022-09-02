@@ -5,6 +5,7 @@ var moment = require("moment-timezone");
 // Models
 const Resident = require("../models/resident.model");
 const Caregiver = require("../models/caregiver.model");
+const Careplan = require("../models/careplan.model");
 
 // Middlewares
 const {
@@ -42,16 +43,16 @@ module.exports = {
     try {
       const { name, age, contact, careplan } = req.body;
 
-      const { media } = req.file;
+      // const { media } = req.file;
 
-      const body = { ...req.body, media };
+      // const body = { ...req.body, media };
 
-      // Run Hapi/Joi validation
-      const { error } = await residentValidation.validateAsync(body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // // Run Hapi/Joi validation
+      // const { error } = await residentValidation.validateAsync(body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const image = await uploadImageSingle(req, res, next);
+      const media = await uploadImageSingle(req, res, next);
 
       // date
       const dateCreated = moment()
@@ -64,7 +65,7 @@ module.exports = {
         age,
         contact,
         careplan,
-        image,
+        media,
         dateCreated,
       });
       await resident.save();
@@ -223,7 +224,7 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: `Deleted resident ${resident.name} successfully`,
+        message: `Deleted resident: ${resident.name} successfully`,
       });
     } catch (err) {
       return res.status(500).send({
@@ -244,33 +245,33 @@ module.exports = {
   //   create care givers
   postCreateCaregiverController: async (req, res, next) => {
     try {
-      const { name, email, phone, sex, address, licenseNo } = req.body;
+      const { name, email, phone, gender, address, licenseNo } = req.body;
 
-      const { media } = req.file;
+      // const { media } = req.file;
 
-      const body = { ...req.body, media };
+      // const body = { ...req.body, media };
 
-      // Run Hapi/Joi validation
-      const { error } = await caregiverValidation.validateAsync(body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // // Run Hapi/Joi validation
+      // const { error } = await caregiverValidation.validateAsync(body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const image = await uploadImageSingle(req, res, next);
+      const media = await uploadImageSingle(req, res, next);
 
       // date
       const dateCreated = moment()
         .tz("Africa/Lagos")
         .format("YYYY-MM-DD HH:MM:SS");
 
-      // create resident
+      // create caregiver
       const caregiver = new Caregiver({
         name,
         email,
         phone,
-        sex,
+        gender,
         address,
         licenseNo,
-        image,
+        media,
         dateCreated,
       });
       await caregiver.save();
@@ -381,7 +382,7 @@ module.exports = {
 
       //   if no caregiver was found
       if (!caregiver) {
-        return res.status(500).send({
+        return res.status(400).send({
           success: false,
           message: "ID didn't match a care giver",
           // errMessage: err.message,
@@ -426,7 +427,7 @@ module.exports = {
 
       //   if no caregiver was found
       if (!caregiver) {
-        return res.status(500).send({
+        return res.status(400).send({
           success: false,
           message: "ID didn't match a care giver",
           // errMessage: err.message,
@@ -435,12 +436,78 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: `Deleted care giver ${caregiver.name} successfully`,
+        message: `Deleted care giver: ${caregiver.name} successfully`,
       });
     } catch (err) {
       return res.status(500).send({
         success: false,
         message: "Couldn't delete care giver",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  //   *
+  //   **
+  //   ***
+  //   **
+  //   *
+
+  // ***** CARE PLAN *****//
+  // create care plan
+  postCreateCarePlanController: async (req, res) => {
+    try {
+      const { residentId, caregiverId, plan } = req.body;
+      console.log("postCreateCarePlanController: ~ req.body", req.body);
+
+      // check if resident exists
+      const foundResident = await Resident.findById({ _id: residentId });
+      if (!foundResident) {
+        return res.status(500).send({
+          success: false,
+          message: "Resident not found",
+          // errMessage: err.message,
+        });
+      }
+
+      // check if caregiver exists
+      const foundCaregiver = await Caregiver.findById({ _id: caregiverId });
+      if (!foundCaregiver) {
+        return res.status(500).send({
+          success: false,
+          message: "Care giver not found",
+          // errMessage: err.message,
+        });
+      }
+
+      // date
+      const dateCreated = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:MM:SS");
+
+      // save
+      const careplan = new Careplan({
+        residentId,
+        caregiverId,
+        plan,
+        dateCreated,
+      });
+      await careplan.save();
+
+      console.log("Created new care plan");
+
+      return res.status(200).send({
+        success: true,
+        message: "Created new Care plan",
+        data: {
+          careplan,
+        },
+      });
+    } catch (err) {
+      console.log("postCreateCarePlanController: ~ err: ", err);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't create Care plan",
         // errMessage: err.message,
       });
     }

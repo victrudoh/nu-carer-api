@@ -19,13 +19,18 @@ const residentSchema = new Schema(
       type: String,
       required: true,
     },
-    image: {
+    media: {
       type: String,
       required: true,
     },
     careplan: {
       type: String,
       required: true,
+    },
+    careplanId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Careplan",
     },
     role: {
       type: String,
@@ -37,7 +42,7 @@ const residentSchema = new Schema(
     },
     dateModified: {
       type: String,
-      default: "Not modified",
+      default: "un-modified",
     },
   },
   {
