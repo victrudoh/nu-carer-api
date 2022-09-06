@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 // Stuff
 const Schema = mongoose.Schema;
 
-// User Schema
+// care plan Schema
 const careplanSchema = new Schema(
   {
     residentId: {

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 // Stuff
 const Schema = mongoose.Schema;
 
-// User Schema
+// Resident Schema
 const residentSchema = new Schema(
   {
     name: {

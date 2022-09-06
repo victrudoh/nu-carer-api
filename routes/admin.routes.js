@@ -56,6 +56,7 @@ router.post(
   admin.postEditCaregiverController
 );
 router.delete("/caregiver/delete", admin.deleteCaregiverController);
+router.get("/caregiver/timesheet", admin.getTimesheetController);
 
 //   *
 //   **

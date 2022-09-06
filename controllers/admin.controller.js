@@ -6,6 +6,7 @@ var moment = require("moment-timezone");
 const Resident = require("../models/resident.model");
 const Caregiver = require("../models/caregiver.model");
 const Careplan = require("../models/careplan.model");
+const Timesheet = require("../models/timesheet.model");
 
 // Middlewares
 const {
@@ -57,7 +58,7 @@ module.exports = {
       // date
       const dateCreated = moment()
         .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:MM:SS");
+        .format("YYYY-MM-DD HH:mm:SS");
 
       // create resident
       const resident = new Resident({
@@ -168,7 +169,7 @@ module.exports = {
       // date
       const dateModified = moment()
         .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:MM:SS");
+        .format("YYYY-MM-DD HH:mm:SS");
 
       const resident = await Resident.findById({ _id: id });
 
@@ -261,7 +262,7 @@ module.exports = {
       // date
       const dateCreated = moment()
         .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:MM:SS");
+        .format("YYYY-MM-DD HH:mm:SS");
 
       // create caregiver
       const caregiver = new Caregiver({
@@ -376,7 +377,7 @@ module.exports = {
       // date
       const dateModified = moment()
         .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:MM:SS");
+        .format("YYYY-MM-DD HH:mm:SS");
 
       const caregiver = await Caregiver.findById({ _id: id });
 
@@ -447,6 +448,47 @@ module.exports = {
     }
   },
 
+  // view caregiver timesheet
+  getTimesheetController: async (req, res) => {
+    try {
+      const { id } = req.query;
+
+      // find caregiver
+      const caregiver = await Caregiver.findById({ _id: id });
+
+      if (!caregiver) {
+        return res.status(400).send({
+          success: false,
+          message: "Couldn't find care giver",
+          // errMessage: err.message,
+        });
+      }
+
+      const timesheet = await Timesheet.find({ caregiverId: caregiver.id });
+
+      if (!timesheet) {
+        return res.status(400).send({
+          success: false,
+          message: `No time sheet for care giver - ${caregiver.name}`,
+          // errMessage: err.message,
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        length: timesheet.length,
+        message: `Fetched time sheet for care giver - ${caregiver.name}`,
+        data: timesheet,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't fetch time sheet",
+        // errMessage: err.message,
+      });
+    }
+  },
+
   //   *
   //   **
   //   ***
@@ -483,7 +525,7 @@ module.exports = {
       // date
       const dateCreated = moment()
         .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:MM:SS");
+        .format("YYYY-MM-DD HH:mm:SS");
 
       // save
       const careplan = new Careplan({
