@@ -3,13 +3,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // Models
-const User = require("../models/user.model");
+const Admin = require("../models/admin.model");
 
 // Middlewares
 const {
   signUpValidation,
   loginValidation,
 } = require("../middlewares/validate");
+const { uploadImageSingle } = require("../middlewares/cloudinary.js");
 
 module.exports = {
   //   Test API connection
@@ -32,14 +33,14 @@ module.exports = {
     try {
       const { firstName, lastName, userName, email, password, role } = req.body;
 
-      const body = { ...req.body };
+      // const body = { ...req.body };
 
       // Run Hapi/Joi validation
-      const { error } = await signUpValidation.validateAsync(body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // const { error } = await signUpValidation.validateAsync(body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       //   check if email exist
-      const emailExists = await User.findOne({ email: email });
+      const emailExists = await Admin.findOne({ email: email });
       if (emailExists) {
         return res.status(400).send({
           success: false,
@@ -50,16 +51,21 @@ module.exports = {
       //   Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      // send image to cloudinary
+      const media = await uploadImageSingle(req, res, next);
+
       // create user
-      const user = new User({
+      const user = new Admin({
         firstName,
         lastName,
         userName,
         email,
         password: hashedPassword,
+        media,
         role,
       });
       await user.save();
+      console.log("user", user);
 
       return res.status(200).send({
         success: true,
@@ -69,6 +75,7 @@ module.exports = {
         message: `New ${user.role} registered successfully`,
       });
     } catch (err) {
+      console.log("postRegisterController: ~ err", err);
       return res.status(500).send({
         success: false,
         message: err.message,
@@ -79,14 +86,15 @@ module.exports = {
   // Login
   postLoginController: async (req, res, next) => {
     try {
-      const { userName, password } = req.body;
+      const { email, password } = req.body;
 
       // Run Hapi/Joi validation
-      const { error } = await loginValidation.validateAsync(req.body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // const { error } = await loginValidation.validateAsync(req.body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       //   check if user exist
-      const user = await User.findOne({ userName });
+      const user = await Admin.findOne({ email });
+
       if (!user) return res.status(400).send("Invalid username or password");
 
       // validate password

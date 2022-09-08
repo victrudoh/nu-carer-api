@@ -35,6 +35,7 @@ router.post(
   admin.postEditResidentController
 );
 router.delete("/resident/delete", admin.deleteResidentController);
+router.post("/resident/add-careplan", admin.postCreateCarePlanController);
 
 //   *
 //   **
@@ -57,14 +58,6 @@ router.post(
 );
 router.delete("/caregiver/delete", admin.deleteCaregiverController);
 router.get("/caregiver/timesheet", admin.getTimesheetController);
-
-//   *
-//   **
-//   ***
-//   **
-//   *
-
-// CAREPLAN
-router.post("/careplan/add", admin.postCreateCarePlanController);
+router.get("/caregiver/report", admin.getSummaryReportController);
 
 module.exports = router;

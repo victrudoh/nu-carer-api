@@ -23,15 +23,15 @@ const residentSchema = new Schema(
       type: String,
       required: true,
     },
-    careplan: {
-      type: String,
-      required: true,
-    },
-    careplanId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Careplan",
-    },
+    // careplan: {
+    //   type: String,
+    //   default: "unassigned",
+    // },
+    // careplanId: {
+    //   type: Schema.Types.ObjectId,
+    //   required: true,
+    //   ref: "Careplan",
+    // },
     role: {
       type: String,
       required: true,

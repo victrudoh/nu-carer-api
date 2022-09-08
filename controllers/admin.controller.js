@@ -1,5 +1,6 @@
 // Dependencies
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 var moment = require("moment-timezone");
 
 // Models
@@ -79,7 +80,6 @@ module.exports = {
         },
       });
     } catch (err) {
-      console.log("postCreateResidentController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't create resident",
@@ -93,6 +93,7 @@ module.exports = {
     try {
       const { id } = req.query;
 
+      // find resident
       const resident = await Resident.findById({ _id: id });
 
       //   if no resident was found
@@ -104,11 +105,20 @@ module.exports = {
         });
       }
 
+      // Find careplan for resident
+      let careplan = await Careplan.find({ residentId: id });
+
+      //   if no careplan was found
+      if (!careplan) {
+        careplan = "unassigned";
+      }
+
       return res.status(200).send({
         success: true,
         message: "Found Resident",
         data: {
-          resident,
+          resident: resident,
+          careplan: careplan,
         },
       });
     } catch (err) {
@@ -153,15 +163,15 @@ module.exports = {
   postEditResidentController: async (req, res, next) => {
     try {
       const { id } = req.query;
-      const { name, age, contact, careplan } = req.body;
+      const { name, age, contact } = req.body;
 
-      const { media } = req.file;
+      // const { media } = req.file;
 
-      const body = { ...req.body, media };
+      // const body = { ...req.body, media };
 
       // Run Hapi/Joi validation
-      const { error } = await residentValidation.validateAsync(body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // const { error } = await residentValidation.validateAsync(body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
@@ -185,10 +195,11 @@ module.exports = {
       resident.name = name;
       resident.age = age;
       resident.contact = contact;
-      resident.careplan = careplan;
+      // resident.careplan = careplan;
       resident.image = image;
       resident.dateModified = dateModified;
       await resident.save();
+      console.log("resident", resident);
 
       return res.status(200).send({
         success: true,
@@ -236,6 +247,83 @@ module.exports = {
     }
   },
 
+  // create care plan
+  postCreateCarePlanController: async (req, res) => {
+    try {
+      const { caregiverId, plan } = req.body;
+      const { residentId } = req.query;
+
+      // check if resident exists
+      const foundResident = await Resident.findById({ _id: residentId });
+      if (!foundResident) {
+        return res.status(500).send({
+          success: false,
+          message: "Resident not found",
+          // errMessage: err.message,
+        });
+      }
+
+      // check if caregiver exists
+      const foundCaregiver = await Caregiver.findById({ _id: caregiverId });
+      if (!foundCaregiver) {
+        return res.status(500).send({
+          success: false,
+          message: "Care giver not found",
+          // errMessage: err.message,
+        });
+      }
+
+      // date
+      const dateCreated = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:mm:SS");
+
+      // save
+      const careplan = new Careplan({
+        residentId,
+        caregiverId,
+        plan,
+        dateCreated,
+      });
+      await careplan.save();
+
+      console.log("Created new care plan");
+
+      return res.status(200).send({
+        success: true,
+        message: "Created new Care plan",
+        data: {
+          careplan,
+        },
+      });
+    } catch (err) {
+      console.log("postCreateCarePlanController: ~ err: ", err);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't create Care plan",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  // edit care plan
+  postEditCarePlanController: async (req, res, next) => {
+    try {
+      const { id } = req.query;
+
+      return res.status(200).send({
+        success: true,
+        message: `Successfully edited care plan for ${resident.name}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't edit care plan",
+        // errMessage: err.message,
+      });
+    }
+  },
+
   //   *
   //   **
   //   ***
@@ -246,7 +334,8 @@ module.exports = {
   //   create care givers
   postCreateCaregiverController: async (req, res, next) => {
     try {
-      const { name, email, phone, gender, address, licenseNo } = req.body;
+      const { name, email, password, phone, gender, address, licenseNo } =
+        req.body;
 
       // const { media } = req.file;
 
@@ -259,6 +348,9 @@ module.exports = {
       // send image to cloudinary
       const media = await uploadImageSingle(req, res, next);
 
+      //   Hash password
+      const hashedPassword = await bcrypt.hash(password, 12);
+
       // date
       const dateCreated = moment()
         .tz("Africa/Lagos")
@@ -268,6 +360,7 @@ module.exports = {
       const caregiver = new Caregiver({
         name,
         email,
+        password: hashedPassword,
         phone,
         gender,
         address,
@@ -277,8 +370,6 @@ module.exports = {
       });
       await caregiver.save();
 
-      console.log("Care giver added");
-
       return res.status(200).send({
         success: true,
         message: "Created new Care giver",
@@ -287,7 +378,6 @@ module.exports = {
         },
       });
     } catch (err) {
-      console.log("postCreateCaregiverController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't create Care giver",
@@ -361,15 +451,16 @@ module.exports = {
   postEditCaregiverController: async (req, res, next) => {
     try {
       const { id } = req.query;
-      const { name, email, phone, sex, address, licenseNo } = req.body;
+      const { name, email, password, phone, gender, address, licenseNo } =
+        req.body;
 
-      const { media } = req.file;
+      // const { media } = req.file;
 
-      const body = { ...req.body, media };
+      // const body = { ...req.body, media };
 
       // Run Hapi/Joi validation
-      const { error } = await caregiverValidation.validateAsync(body);
-      if (error) return res.status(400).send(error.details[0].message);
+      // const { error } = await caregiverValidation.validateAsync(body);
+      // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
       const image = await uploadImageSingle(req, res, next);
@@ -390,17 +481,20 @@ module.exports = {
         });
       }
 
+      //   Hash password
+      const hashedPassword = await bcrypt.hash(password, 12);
+
       caregiver.name = name;
       caregiver.email = email;
+      caregiver.password = hashedPassword;
       caregiver.phone = phone;
-      caregiver.sex = sex;
+      caregiver.gender = gender;
       caregiver.address = address;
       caregiver.licenseNo = licenseNo;
       caregiver.image = image;
       caregiver.dateModified = dateModified;
       await caregiver.save();
-
-      console.log(`Edited care giver ${caregiver.name} successfully`);
+      console.log("caregiver", caregiver);
 
       return res.status(200).send({
         success: true,
@@ -489,64 +583,53 @@ module.exports = {
     }
   },
 
-  //   *
-  //   **
-  //   ***
-  //   **
-  //   *
-
-  // ***** CARE PLAN *****//
-  // create care plan
-  postCreateCarePlanController: async (req, res) => {
+  // caregiver report summary
+  getSummaryReportController: async (req, res) => {
     try {
-      const { residentId, caregiverId, plan } = req.body;
-      console.log("postCreateCarePlanController: ~ req.body", req.body);
+      const { id, from, to } = req.query;
 
-      // check if resident exists
-      const foundResident = await Resident.findById({ _id: residentId });
-      if (!foundResident) {
-        return res.status(500).send({
-          success: false,
-          message: "Resident not found",
-          // errMessage: err.message,
-        });
-      }
-
-      // check if caregiver exists
-      const foundCaregiver = await Caregiver.findById({ _id: caregiverId });
-      if (!foundCaregiver) {
-        return res.status(500).send({
-          success: false,
-          message: "Care giver not found",
-          // errMessage: err.message,
-        });
-      }
-
-      // date
-      const dateCreated = moment()
-        .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:mm:SS");
-
-      // save
-      const careplan = new Careplan({
-        residentId,
-        caregiverId,
-        plan,
-        dateCreated,
+      // fetch reports within range
+      const reports = await Timesheet.find({
+        caregiverId: id,
+        checkInDate: { $gte: from, $lte: to },
       });
-      await careplan.save();
 
-      console.log("Created new care plan");
+      // if no report
+      if (!reports) {
+        return res.status(400).send({
+          success: false,
+          message: "Couldn't fetch results",
+          // errMessage: err.message,
+        });
+      }
 
+      // get total sessions (just get total checkins)
+      // console.log("getSummaryReportController: ~ reports", reports.length);
+
+      // get number of complete clock cycles (completed check ins and outs)
+      let clockCycles = 0;
+      reports.map((item) => {
+        if (item.checkOutDate !== "not-checked-out") {
+          clockCycles = clockCycles + 1;
+        }
+      });
+
+      // populate caregiver details
+      const caregiver = await Caregiver.findById({ _id: id });
+
+      // get total hours (no too stress sha)
+
+      // return total sessions, completed clock cycles, caregiver details, total hours
       return res.status(200).send({
         success: true,
-        message: "Created new Care plan",
+        message: `Generated report summary for ${caregiver.name} from ${from} to ${to}`,
         data: {
-          careplan,
+          sessions: reports.length,
+          clockCycles: clockCycles,
+          caregiver: caregiver,
         },
       });
     } catch (err) {
-      console.log("postCreateCarePlanController: ~ err: ", err);
       return res.status(500).send({
         success: false,
         message: "Couldn't create Care plan",

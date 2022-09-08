@@ -1,5 +1,7 @@
 // Dependencies
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
 var moment = require("moment-timezone");
 
 // Models
@@ -20,6 +22,43 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't ping",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  // CAREGIVER LOGIN
+  postCaregiverLoginController: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const user = await Caregiver.findOne({ email: email });
+      console.log("postCaregiverLoginController: ~ user", user);
+
+      // if no caregiver
+      if (!user) return res.status(400).send("Invalid username or password");
+
+      // validate password
+      const validatePassword = await bcrypt.compare(password, user.password);
+      if (!validatePassword)
+        return res.status(400).send("Invalid username or password");
+
+      //   Generate JWT Token
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
+      return res.status(200).send({
+        success: true,
+        data: {
+          user: user,
+          token: token,
+        },
+        message: "Login successful",
+      });
+    } catch (err) {
+      console.log("postCaregiverLoginController: ~ err", err);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't log in",
         // errMessage: err.message,
       });
     }
@@ -119,7 +158,7 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: `Care giver - ${caregiver.name} Checked in`,
+        message: `Care giver - ${caregiver.name} Checked out`,
         data: foundSession,
       });
     } catch (err) {
