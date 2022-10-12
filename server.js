@@ -5,31 +5,30 @@ require("dotenv").config();
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 
-
 // ENV Variables
-const port = process.env.PORT
-const MONGODB_URI = process.env.MONGODB_URI
-
+const port = process.env.PORT;
+const MONGODB_URI = process.env.ATLAS;
 
 // Don't ask
 const app = express();
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
-
 // Set Routes
-require("./routes/index.routes")(app)
-
+require("./routes/index.routes")(app);
 
 // Connect to DB and start server
-mongoose.connect(MONGODB_URI, {
+mongoose
+  .connect(MONGODB_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
-}).then(() => {
+  })
+  .then(() => {
     console.log("***Database Connected***");
     app.listen(port, () => {
-        console.log(`<<<Server running on ${port}>>>`);
+      console.log(`<<<Server running on ${port}>>>`);
     });
-}).catch((err) => console.log("Connection Error: ", err.message));
+  })
+  .catch((err) => console.log("Connection Error: ", err.message));
