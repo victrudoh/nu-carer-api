@@ -2,7 +2,7 @@
 const path = require("path");
 const express = require("express");
 require("dotenv").config();
-const morgan = require("morgan");
+// const morgan = require("morgan");
 const mongoose = require("mongoose");
 
 // ENV Variables
@@ -13,7 +13,7 @@ const MONGODB_URI = process.env.ATLAS;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Set Routes
