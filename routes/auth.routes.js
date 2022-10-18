@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/ping", auth.getPingController);
 router.post(
   "/register",
-  multerUploads.single("media"),
+  // multerUploads.single("media"),
   auth.postRegisterController
 );
 router.post("/login", auth.postLoginController);
