@@ -31,7 +31,8 @@ module.exports = {
   //   Register
   postRegisterController: async (req, res, next) => {
     try {
-      const { firstName, lastName, userName, email, password, role } = req.body;
+      const { firstName, lastName, userName, email, password, media } =
+        req.body;
 
       // const body = { ...req.body };
 
@@ -52,7 +53,7 @@ module.exports = {
       const hashedPassword = await bcrypt.hash(password, 12);
 
       // send image to cloudinary
-      const media = await uploadImageSingle(req, res, next);
+      // const media = await uploadImageSingle(req, res, next);
 
       // create user
       const user = new Admin({
@@ -62,7 +63,7 @@ module.exports = {
         email,
         password: hashedPassword,
         media,
-        role,
+        role: "admin",
       });
       await user.save();
       console.log("user", user);
