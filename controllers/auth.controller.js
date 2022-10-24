@@ -48,6 +48,15 @@ module.exports = {
         });
       }
 
+      //   check if userName exist
+      const userNameExists = await Admin.findOne({ userName: userName });
+      if (userNameExists) {
+        return res.status(400).send({
+          success: false,
+          message: "userName exists",
+        });
+      }
+
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -86,14 +95,14 @@ module.exports = {
   // Login
   postLoginController: async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const { username, password } = req.body;
 
       // Run Hapi/Joi validation
       // const { error } = await loginValidation.validateAsync(req.body);
       // if (error) return res.status(400).send(error.details[0].message);
 
       //   check if user exist
-      const user = await Admin.findOne({ email });
+      const user = await Admin.findOne({ username });
 
       if (!user) return res.status(400).send("Invalid username or password");
 
