@@ -31,8 +31,12 @@ module.exports = {
   //   Register
   postRegisterController: async (req, res, next) => {
     try {
-      const { firstName, lastName, userName, email, password, media } =
-        req.body;
+      console.log("Got HEre");
+      const { firstName, lastName, userName, email, password } = req.body;
+      console.log(
+        "🚀 ~ file: auth.controller.js ~ line 36 ~ postRegisterController: ~ req.body: ",
+        req.body
+      );
 
       // const body = { ...req.body };
 
@@ -49,7 +53,7 @@ module.exports = {
         });
       }
 
-      //   Hash password
+      // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
       // send image to cloudinary
@@ -62,7 +66,7 @@ module.exports = {
         userName,
         email,
         password: hashedPassword,
-        media,
+        // media,
         role: "admin",
       });
       await user.save();
