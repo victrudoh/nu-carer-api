@@ -11,24 +11,24 @@ const adminSchema = new Schema(
       type: String,
       required: true,
       // min: 6,
-      max: 255,
+      // max: 255,
     },
     email: {
       type: String,
       required: true,
       // min: 6,
-      max: 255,
+      // max: 255,
     },
     password: {
       type: String,
       required: true,
       // min: 6,
-      max: 1024,
+      // max: 255,
     },
-    media: {
-      type: String,
-      required: true,
-    },
+    // media: {
+    //   type: String,
+    //   required: true,
+    // },
     role: {
       type: String,
       required: true,

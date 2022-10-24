@@ -31,12 +31,7 @@ module.exports = {
   //   Register
   postRegisterController: async (req, res, next) => {
     try {
-      console.log("Got HEre");
       const { firstName, lastName, userName, email, password } = req.body;
-      console.log(
-        "🚀 ~ file: auth.controller.js ~ line 36 ~ postRegisterController: ~ req.body: ",
-        req.body
-      );
 
       // const body = { ...req.body };
 
