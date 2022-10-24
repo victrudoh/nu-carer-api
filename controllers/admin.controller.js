@@ -8,6 +8,7 @@ const Resident = require("../models/resident.model");
 const Caregiver = require("../models/caregiver.model");
 const Careplan = require("../models/careplan.model");
 const Timesheet = require("../models/timesheet.model");
+const Admin = require("../models/admin.model");
 
 // Middlewares
 const {
@@ -29,6 +30,39 @@ module.exports = {
         success: false,
         message: "Couldn't ping",
         // errMessage: err.message,
+      });
+    }
+  },
+
+  // Get active admin
+  getActiveAdminController: async (req, res, next) => {
+    try {
+      const { id } = req.query;
+
+      //   check if user exist
+      const admin = await Admin.findOne({ _id: id });
+
+      if (!admin)
+        return res.status(400).send({
+          success: false,
+          message: "Couldn't fetch Admin",
+        });
+
+      return res.status(200).send({
+        success: true,
+        data: {
+          admin: admin,
+        },
+        message: "Fetched active admin",
+      });
+    } catch (err) {
+      console.log(
+        "🚀 ~ file: auth.controller.js ~ line 138 ~ getUserByIdController: ~ err",
+        err
+      );
+      return res.status(500).send({
+        success: false,
+        message: err.message,
       });
     }
   },

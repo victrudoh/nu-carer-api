@@ -14,6 +14,7 @@ const router = express.Router();
 
 // Routes
 router.get("/ping", admin.getPingController);
+router.get("/active", admin.getActiveAdminController);
 
 //   *
 //   **
