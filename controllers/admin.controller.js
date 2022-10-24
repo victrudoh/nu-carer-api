@@ -41,6 +41,10 @@ module.exports = {
 
       //   check if user exist
       const admin = await Admin.findOne({ _id: id });
+      console.log(
+        "🚀 ~ file: admin.controller.js ~ line 44 ~ getActiveAdminController: ~ admin",
+        admin
+      );
 
       if (!admin)
         return res.status(400).send({

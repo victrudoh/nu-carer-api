@@ -7,6 +7,18 @@ const Schema = mongoose.Schema;
 // User Schema
 const adminSchema = new Schema(
   {
+    firstName: {
+      type: String,
+      required: true,
+      // min: 6,
+      // max: 255,
+    },
+    lastName: {
+      type: String,
+      required: true,
+      // min: 6,
+      // max: 255,
+    },
     userName: {
       type: String,
       required: true,
