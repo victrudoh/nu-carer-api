@@ -92,7 +92,7 @@ module.exports = {
       // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const media = await uploadImageSingle(req, res, next);
+      // const media = await uploadImageSingle(req, res, next);
 
       // date
       const dateCreated = moment()
@@ -105,7 +105,7 @@ module.exports = {
         age,
         contact,
         careplan,
-        media,
+        // media,
         dateCreated,
       });
       await resident.save();
@@ -212,7 +212,7 @@ module.exports = {
       // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const image = await uploadImageSingle(req, res, next);
+      // const image = await uploadImageSingle(req, res, next);
 
       // date
       const dateModified = moment()
@@ -234,7 +234,7 @@ module.exports = {
       resident.age = age;
       resident.contact = contact;
       // resident.careplan = careplan;
-      resident.image = image;
+      // resident.image = image;
       resident.dateModified = dateModified;
       await resident.save();
       console.log("resident", resident);
@@ -384,7 +384,7 @@ module.exports = {
       // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const media = await uploadImageSingle(req, res, next);
+      // const media = await uploadImageSingle(req, res, next);
 
       //   Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -403,7 +403,7 @@ module.exports = {
         gender,
         address,
         licenseNo,
-        media,
+        // media,
         dateCreated,
       });
       await caregiver.save();
@@ -501,7 +501,7 @@ module.exports = {
       // if (error) return res.status(400).send(error.details[0].message);
 
       // send image to cloudinary
-      const image = await uploadImageSingle(req, res, next);
+      // const image = await uploadImageSingle(req, res, next);
 
       // date
       const dateModified = moment()
@@ -529,7 +529,7 @@ module.exports = {
       caregiver.gender = gender;
       caregiver.address = address;
       caregiver.licenseNo = licenseNo;
-      caregiver.image = image;
+      // caregiver.image = image;
       caregiver.dateModified = dateModified;
       await caregiver.save();
       console.log("caregiver", caregiver);

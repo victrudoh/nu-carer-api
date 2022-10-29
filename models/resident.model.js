@@ -21,7 +21,7 @@ const residentSchema = new Schema(
     },
     media: {
       type: String,
-      required: true,
+      // required: true,
     },
     // careplan: {
     //   type: String,
