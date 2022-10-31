@@ -616,7 +616,7 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't fetch time sheet",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
