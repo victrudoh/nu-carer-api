@@ -664,6 +664,7 @@ module.exports = {
         data: {
           sessions: reports.length,
           clockCycles: clockCycles,
+          summary: reports,
           caregiver: caregiver,
         },
       });
