@@ -365,6 +365,54 @@ module.exports = {
     }
   },
 
+  // assign caregiver to resident
+  getAssignCaregiverController: async (req, res) => {
+    try {
+      const { residentId, caregiverId } = req.query;
+
+      //   check if resident exist
+      const resident = await Resident.findOne({ _id: residentId });
+      console.log(
+        "🚀 ~ file: admin.controller.js ~ line 375 ~ getAssignCaregiverController: ~ resident",
+        resident
+      );
+
+      if (!resident)
+        return res.status(400).send({
+          success: false,
+          message: "Couldn't fetch Resident",
+        });
+
+      //   check if caregiver exist
+      const caregiver = await Caregiver.findOne({ _id: caregiverId });
+
+      if (!caregiver)
+        return res.status(400).send({
+          success: false,
+          message: "Couldn't fetch care giver",
+        });
+
+      // assign caregiver
+      resident.caregiverId = caregiver.id;
+      resident.caregiverName = caregiver.name;
+      await resident.save();
+
+      return res.status(200).send({
+        success: true,
+        message: `Assigned Caregiver: ${caregiver.name} to Resident: ${resident.name}`,
+      });
+    } catch (err) {
+      console.log(
+        "🚀 ~ file: admin.controller.js ~ line 390 ~ getAssignCaregiverController: ~ err",
+        err
+      );
+      return res.status(500).send({
+        success: false,
+        message: err.message,
+      });
+    }
+  },
+
   //   *
   //   **
   //   ***

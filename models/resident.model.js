@@ -31,6 +31,13 @@ const residentSchema = new Schema(
       type: String,
       required: true,
     },
+    caregiverId: {
+      type: Schema.Types.ObjectId,
+      ref: "Caregiver",
+    },
+    caregiverName: {
+      type: String,
+    },
     // media: {
     // type: String,
     // required: true,

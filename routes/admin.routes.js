@@ -30,6 +30,7 @@ router.post(
 );
 router.get("/resident/one", admin.getResidentByIdController);
 router.get("/resident/all", admin.getAllResidentsController);
+
 router.post(
   "/resident/edit",
   multerUploads.single("media"),
@@ -37,6 +38,7 @@ router.post(
 );
 router.delete("/resident/delete", admin.deleteResidentController);
 router.post("/resident/add-careplan", admin.postCreateCarePlanController);
+router.get("/resident/assign", admin.getAssignCaregiverController);
 
 //   *
 //   **
