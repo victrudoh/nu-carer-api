@@ -15,14 +15,22 @@ const residentSchema = new Schema(
       type: Number,
       required: true,
     },
-    contact: {
+    phone: {
+      type: Number,
+      required: true,
+    },
+    address: {
       type: String,
       required: true,
     },
-    media: {
+    gender: {
       type: String,
-      // required: true,
+      required: true,
     },
+    // media: {
+      // type: String,
+      // required: true,
+    // },
     // careplan: {
     //   type: String,
     //   default: "unassigned",

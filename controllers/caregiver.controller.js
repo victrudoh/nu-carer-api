@@ -36,12 +36,12 @@ module.exports = {
       console.log("postCaregiverLoginController: ~ user", user);
 
       // if no caregiver
-      if (!user) return res.status(400).send("Invalid username or password");
+      if (!user) return res.status(401).send("Invalid email or password");
 
       // validate password
       const validatePassword = await bcrypt.compare(password, user.password);
       if (!validatePassword)
-        return res.status(400).send("Invalid username or password");
+        return res.status(401).send("Invalid email or password");
 
       //   Generate JWT Token
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);

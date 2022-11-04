@@ -81,7 +81,7 @@ module.exports = {
   // create resident
   postCreateResidentController: async (req, res, next) => {
     try {
-      const { name, age, contact, careplan } = req.body;
+      const { name, age, phone, address, gender } = req.body;
 
       // const { media } = req.file;
 
@@ -103,8 +103,8 @@ module.exports = {
       const resident = new Resident({
         name,
         age,
-        contact,
-        careplan,
+        phone, address, gender,
+        // careplan,
         // media,
         dateCreated,
       });
