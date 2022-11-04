@@ -27,9 +27,13 @@ const residentSchema = new Schema(
       type: String,
       required: true,
     },
+    licenseNo: {
+      type: String,
+      required: true,
+    },
     // media: {
-      // type: String,
-      // required: true,
+    // type: String,
+    // required: true,
     // },
     // careplan: {
     //   type: String,
