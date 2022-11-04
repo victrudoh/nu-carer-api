@@ -124,7 +124,7 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't create resident",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
