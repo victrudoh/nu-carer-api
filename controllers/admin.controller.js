@@ -81,7 +81,7 @@ module.exports = {
   // create resident
   postCreateResidentController: async (req, res, next) => {
     try {
-      const { name, age, phone, address, gender, licenseNo } = req.body;
+      const { name, age, phone, address, gender, licenseNo, media } = req.body;
 
       // const { media } = req.file;
 
@@ -108,7 +108,7 @@ module.exports = {
         gender,
         licenseNo,
         // careplan,
-        // media,
+        media,
         dateCreated,
       });
       await resident.save();
@@ -423,8 +423,16 @@ module.exports = {
   //   create care givers
   postCreateCaregiverController: async (req, res, next) => {
     try {
-      const { name, email, password, phone, gender, address, licenseNo } =
-        req.body;
+      const {
+        name,
+        email,
+        password,
+        phone,
+        gender,
+        address,
+        licenseNo,
+        media,
+      } = req.body;
 
       // const { media } = req.file;
 
@@ -454,7 +462,7 @@ module.exports = {
         gender,
         address,
         licenseNo,
-        // media,
+        media,
         dateCreated,
       });
       await caregiver.save();

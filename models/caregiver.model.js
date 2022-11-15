@@ -33,7 +33,7 @@ const caregiverSchema = new Schema(
     },
     media: {
       type: String,
-      // required: true,
+      required: true,
     },
     licenseNo: {
       type: String,

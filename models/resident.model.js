@@ -38,10 +38,10 @@ const residentSchema = new Schema(
     caregiverName: {
       type: String,
     },
-    // media: {
-    // type: String,
-    // required: true,
-    // },
+    media: {
+      type: String,
+      required: true,
+    },
     // careplan: {
     //   type: String,
     //   default: "unassigned",
