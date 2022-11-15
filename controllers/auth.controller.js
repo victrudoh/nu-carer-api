@@ -96,22 +96,22 @@ module.exports = {
   // Login
   postLoginController: async (req, res, next) => {
     try {
-      const { userName, password } = req.body;
+      const { email, password } = req.body;
 
       // Run Hapi/Joi validation
       // const { error } = await loginValidation.validateAsync(req.body);
       // if (error) return res.status(400).send(error.details[0].message);
 
       //   check if user exist
-      const user = await Admin.findOne({ userName: userName });
+      const user = await Admin.findOne({ email: email });
       console.log("user", user);
 
-      if (!user) return res.status(400).send("Invalid username or password");
+      if (!user) return res.status(400).send("Invalid email or password");
 
       // validate password
       const validatePassword = await bcrypt.compare(password, user.password);
       if (!validatePassword)
-        return res.status(400).send("Invalid username or password");
+        return res.status(400).send("Invalid email or password");
 
       //   Generate JWT Token
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
