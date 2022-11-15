@@ -605,7 +605,7 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't edit care giver",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
