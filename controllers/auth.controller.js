@@ -31,7 +31,8 @@ module.exports = {
   //   Register
   postRegisterController: async (req, res, next) => {
     try {
-      const { firstName, lastName, userName, email, password } = req.body;
+      const { firstName, lastName, userName, email, password, media } =
+        req.body;
 
       // const body = { ...req.body };
 
@@ -70,7 +71,7 @@ module.exports = {
         userName,
         email,
         password: hashedPassword,
-        // media,
+        media,
         role: "admin",
       });
       await user.save();
