@@ -96,14 +96,15 @@ module.exports = {
   // Login
   postLoginController: async (req, res, next) => {
     try {
-      const { username, password } = req.body;
+      const { userName, password } = req.body;
 
       // Run Hapi/Joi validation
       // const { error } = await loginValidation.validateAsync(req.body);
       // if (error) return res.status(400).send(error.details[0].message);
 
       //   check if user exist
-      const user = await Admin.findOne({ username });
+      const user = await Admin.findOne({ userName: userName });
+      console.log("user", user);
 
       if (!user) return res.status(400).send("Invalid username or password");
 
