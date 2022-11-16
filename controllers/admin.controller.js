@@ -81,7 +81,7 @@ module.exports = {
   // create resident
   postCreateResidentController: async (req, res, next) => {
     try {
-      const { name, age, phone, address, gender, licenseNo, media } = req.body;
+      const { name, age, phone, address, gender, zipCode, media } = req.body;
 
       // const { media } = req.file;
 
@@ -106,7 +106,7 @@ module.exports = {
         phone,
         address,
         gender,
-        licenseNo,
+        zipCode,
         // careplan,
         media,
         dateCreated,
@@ -204,7 +204,7 @@ module.exports = {
   postEditResidentController: async (req, res, next) => {
     try {
       const { id } = req.query;
-      const { name, age, contact } = req.body;
+      const { name, age, phone, address, gender, zipCode, media } = req.body;
 
       // const { media } = req.file;
 
@@ -235,9 +235,11 @@ module.exports = {
 
       resident.name = name;
       resident.age = age;
-      resident.contact = contact;
-      // resident.careplan = careplan;
-      // resident.image = image;
+      resident.phone = phone;
+      resident.address = address;
+      resident.gender = gender;
+      resident.zipCode = zipCode;
+      resident.media = media;
       resident.dateModified = dateModified;
       await resident.save();
       console.log("resident", resident);

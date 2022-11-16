@@ -27,7 +27,7 @@ const residentSchema = new Schema(
       type: String,
       required: true,
     },
-    licenseNo: {
+    zipCode: {
       type: String,
       required: true,
     },
