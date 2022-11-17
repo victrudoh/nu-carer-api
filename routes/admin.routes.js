@@ -42,6 +42,7 @@ router.get("/resident/assign", admin.getAssignCaregiverController);
 router.post("/resident/add-careplan", admin.postCreateCarePlanController);
 router.put("/resident/edit-careplan", admin.putEditCarePlanController);
 router.delete("/resident/delete-careplan", admin.deleteCareplanController);
+router.get("/resident/careplan", admin.getCareplanActivitiesController);
 
 //   *
 //   **

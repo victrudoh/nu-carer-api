@@ -432,6 +432,29 @@ module.exports = {
     }
   },
 
+  // fetch all careplan activities for a resident
+  getCareplanActivitiesController: async (req, res) => {
+    try {
+      const { residentId } = req.query;
+      const activities = await Careplan.find({ residentId: residentId });
+      return res.status(200).send({
+        success: true,
+        data: activities,
+        message: `Fetched activities for Careplan successfully`,
+      });
+    } catch (err) {
+      console.log(
+        "🚀 ~ file: admin.controller.js ~ line 446 ~ getCareplanActivitiesController: ~ err",
+        err
+      );
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't fetch activities",
+        // errMessage: err.message,
+      });
+    }
+  },
+
   // assign caregiver to resident
   getAssignCaregiverController: async (req, res) => {
     try {
