@@ -43,14 +43,24 @@ const residentSchema = new Schema(
       required: true,
     },
     // careplan: {
-    //   type: String,
-    //   default: "unassigned",
+    //   communication: {
+    //     id: {
+    //       type: Number,
+    //       default: 1,
+    //     },
+    //     assessment: {
+    //       type: String,
+    //     },
+    //     comment: {
+    //       type: String,
+    //     },
+    //   },
     // },
-    // careplanId: {
-    //   type: Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "Careplan",
-    // },
+    careplanId: {
+      type: Schema.Types.ObjectId,
+      // required: true,
+      ref: "Careplan",
+    },
     role: {
       type: String,
       required: true,

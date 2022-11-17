@@ -16,6 +16,7 @@ const {
   caregiverValidation,
 } = require("../middlewares/validate");
 const { uploadImageSingle } = require("../middlewares/cloudinary.js");
+const { default: mongoose } = require("mongoose");
 
 module.exports = {
   //   Test API connection
@@ -226,7 +227,7 @@ module.exports = {
 
       //   if no resident was found
       if (!resident) {
-        return res.status(500).send({
+        return res.status(400).send({
           success: false,
           message: "ID didn't match a resident",
           // errMessage: err.message,
@@ -293,7 +294,7 @@ module.exports = {
   // create care plan
   postCreateCarePlanController: async (req, res) => {
     try {
-      const { caregiverId, plan } = req.body;
+      const { activity, assessment, comment } = req.body;
       const { residentId } = req.query;
 
       // check if resident exists
@@ -306,12 +307,12 @@ module.exports = {
         });
       }
 
-      // check if caregiver exists
-      const foundCaregiver = await Caregiver.findById({ _id: caregiverId });
-      if (!foundCaregiver) {
-        return res.status(500).send({
+      // check if the careplan exists
+      const foundCareplan = await Careplan.findOne({ activity: activity });
+      if (foundCareplan) {
+        return res.status(400).send({
           success: false,
-          message: "Care giver not found",
+          message: "This activity already exists for this resident",
           // errMessage: err.message,
         });
       }
@@ -324,8 +325,9 @@ module.exports = {
       // save
       const careplan = new Careplan({
         residentId,
-        caregiverId,
-        plan,
+        activity,
+        assessment,
+        comment,
         dateCreated,
       });
       await careplan.save();
@@ -350,9 +352,43 @@ module.exports = {
   },
 
   // edit care plan
-  postEditCarePlanController: async (req, res, next) => {
+  putEditCarePlanController: async (req, res, next) => {
     try {
-      const { id } = req.query;
+      const { careplanId } = req.query;
+      const { activity, assessment, comment } = req.body;
+
+      // date
+      const dateModified = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:mm:SS");
+
+      const careplan = await Careplan.findById({ _id: careplanId });
+
+      //   if no careplan was found
+      if (!careplan) {
+        return res.status(400).send({
+          success: false,
+          message: "ID didn't match a careplan",
+          // errMessage: err.message,
+        });
+      }
+
+      // get resident
+      const resident = await Resident.findById({ _id: careplan.residentId });
+      //   if no resident was found
+      if (!resident) {
+        return res.status(400).send({
+          success: false,
+          message: "Resident not found",
+          // errMessage: err.message,
+        });
+      }
+
+      careplan.activity = activity;
+      careplan.assessment = assessment;
+      careplan.comment = comment;
+      careplan.dateModified = dateModified;
+      await careplan.save();
 
       return res.status(200).send({
         success: true,
@@ -362,6 +398,35 @@ module.exports = {
       return res.status(500).send({
         success: false,
         message: "Couldn't edit care plan",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  // delete Careplan
+  deleteCareplanController: async (req, res) => {
+    try {
+      const { id } = req.query;
+
+      const careplan = await Careplan.findByIdAndDelete({ _id: id });
+
+      //   if no Careplan was found
+      if (!careplan) {
+        return res.status(400).send({
+          success: false,
+          message: "ID didn't match an activity",
+          // errMessage: err.message,
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: `Deleted Activity: ${careplan.activity} from Careplan successfully`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't delete activity",
         // errMessage: err.message,
       });
     }

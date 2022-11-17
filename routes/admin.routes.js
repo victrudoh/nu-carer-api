@@ -37,8 +37,11 @@ router.post(
   admin.postEditResidentController
 );
 router.delete("/resident/delete", admin.deleteResidentController);
-router.post("/resident/add-careplan", admin.postCreateCarePlanController);
 router.get("/resident/assign", admin.getAssignCaregiverController);
+// careplan
+router.post("/resident/add-careplan", admin.postCreateCarePlanController);
+router.put("/resident/edit-careplan", admin.putEditCarePlanController);
+router.delete("/resident/delete-careplan", admin.deleteCareplanController);
 
 //   *
 //   **
