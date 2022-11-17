@@ -9,6 +9,7 @@ const Caregiver = require("../models/caregiver.model");
 const Careplan = require("../models/careplan.model");
 const Timesheet = require("../models/timesheet.model");
 const Admin = require("../models/admin.model");
+const Activity = require("../models/activity.model");
 
 // Middlewares
 const {
@@ -291,11 +292,11 @@ module.exports = {
     }
   },
 
-  // create care plan
-  postCreateCarePlanController: async (req, res) => {
+  // add activity to care plan
+  postAddActivityToCarePlanController: async (req, res) => {
     try {
-      const { activity, assessment, comment } = req.body;
-      const { residentId } = req.query;
+      const { assessment, comment } = req.body;
+      const { residentId, activityId } = req.query;
 
       // check if resident exists
       const foundResident = await Resident.findById({ _id: residentId });
@@ -307,9 +308,12 @@ module.exports = {
         });
       }
 
-      // check if the careplan exists
-      const foundCareplan = await Careplan.findOne({ activity: activity });
-      if (foundCareplan) {
+      // check if the activity exists for the resident
+      const foundActivity = await Careplan.findOne({
+        residentId: residentId,
+        activityId: activityId,
+      });
+      if (foundActivity) {
         return res.status(400).send({
           success: false,
           message: "This activity already exists for this resident",
@@ -325,7 +329,7 @@ module.exports = {
       // save
       const careplan = new Careplan({
         residentId,
-        activity,
+        activityId,
         assessment,
         comment,
         dateCreated,
@@ -336,7 +340,7 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: "Created new Care plan",
+        message: `Created new activity for ${foundResident.name}`,
         data: {
           careplan,
         },
@@ -354,80 +358,82 @@ module.exports = {
   // edit care plan
   putEditCarePlanController: async (req, res, next) => {
     try {
-      const { careplanId } = req.query;
-      const { activity, assessment, comment } = req.body;
+      const { activityId, residentId } = req.query;
+      const { assessment, comment } = req.body;
 
-      // date
-      const dateModified = moment()
-        .tz("Africa/Lagos")
-        .format("YYYY-MM-DD HH:mm:SS");
-
-      const careplan = await Careplan.findById({ _id: careplanId });
-
-      //   if no careplan was found
-      if (!careplan) {
-        return res.status(400).send({
-          success: false,
-          message: "ID didn't match a careplan",
-          // errMessage: err.message,
-        });
-      }
-
-      // get resident
-      const resident = await Resident.findById({ _id: careplan.residentId });
-      //   if no resident was found
-      if (!resident) {
-        return res.status(400).send({
+      // check if resident exists
+      const foundResident = await Resident.findById({ _id: residentId });
+      if (!foundResident) {
+        return res.status(500).send({
           success: false,
           message: "Resident not found",
           // errMessage: err.message,
         });
       }
 
-      careplan.activity = activity;
-      careplan.assessment = assessment;
-      careplan.comment = comment;
-      careplan.dateModified = dateModified;
-      await careplan.save();
+      // check if the activity exists for the resident
+      const foundActivity = await Careplan.findOne({
+        residentId: residentId,
+        activityId: activityId,
+      });
+
+      if (!foundActivity) {
+        return res.status(400).send({
+          success: false,
+          message: "Activity not found",
+          // errMessage: err.message,
+        });
+      }
+
+      // date
+      const dateModified = moment()
+        .tz("Africa/Lagos")
+        .format("YYYY-MM-DD HH:mm:SS");
+
+      foundActivity.assessment = assessment;
+      foundActivity.comment = comment;
+      foundActivity.dateModified = dateModified;
+      await foundActivity.save();
 
       return res.status(200).send({
         success: true,
-        message: `Successfully edited care plan for ${resident.name}`,
+        message: `Successfully edited care plan for ${foundResident.name}`,
       });
     } catch (err) {
       return res.status(500).send({
         success: false,
         message: "Couldn't edit care plan",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
 
-  // delete Careplan
+  // delete Careplan activity
   deleteCareplanController: async (req, res) => {
     try {
-      const { id } = req.query;
+      const { careplanId } = req.query;
 
-      const careplan = await Careplan.findByIdAndDelete({ _id: id });
+      const foundActivity = await Careplan.findByIdAndDelete({
+        _id: careplanId,
+      });
 
-      //   if no Careplan was found
-      if (!careplan) {
+      if (!foundActivity) {
         return res.status(400).send({
           success: false,
-          message: "ID didn't match an activity",
+          message: "Couldn't find activity",
           // errMessage: err.message,
         });
       }
 
       return res.status(200).send({
         success: true,
-        message: `Deleted Activity: ${careplan.activity} from Careplan successfully`,
+        message: `Deleted Activity from Careplan successfully`,
       });
     } catch (err) {
       return res.status(500).send({
         success: false,
         message: "Couldn't delete activity",
-        // errMessage: err.message,
+        errMessage: err.message,
       });
     }
   },
@@ -503,6 +509,159 @@ module.exports = {
     }
   },
 
+  //   *
+  //   **
+  //   ***
+  //   **
+  //   *
+  // ACTIVITIES FOR CAREPLAN
+  postCreateActivityController: async (req, res) => {
+    try {
+      const { name } = req.body;
+
+      const foundActivity = await Activity.findOne({ name: name });
+      if (foundActivity) {
+        return res.status(400).send({
+          success: false,
+          message: "This activity already exists",
+          // errMessage: err.message,
+        });
+      }
+
+      // create and save
+      const activity = new Activity({
+        name,
+      });
+      await activity.save();
+
+      return res.status(200).send({
+        success: true,
+        message: "Created new Activity",
+        data: {
+          activity,
+        },
+      });
+    } catch (error) {
+      console.log("postCreateActivityController: ~ error: ", error);
+    }
+  },
+
+  putEditActivityController: async (req, res) => {
+    try {
+      const { id } = req.query;
+      const { name, assessment, comment } = req.body;
+
+      const activity = await Activity.findById({ _id: id });
+      if (!activity) {
+        return res.status(400).send({
+          success: false,
+          message: "Activity not found",
+          // errMessage: err.message,
+        });
+      }
+
+      activity.name = name;
+      activity.assessment = assessment;
+      activity.comment = comment;
+
+      await activity.save();
+      return res.status(200).send({
+        success: true,
+        message: `Edited activity ${activity.name} successfully`,
+        data: {
+          activity,
+        },
+      });
+    } catch (error) {
+      console.log("putEditActivityController: ~ error: ", error);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't delete activity",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  getAllActivityController: async (req, res) => {
+    try {
+      const activities = await Activity.find();
+
+      return res.status(200).send({
+        success: true,
+        message: `Fetched all activities successfully`,
+        data: {
+          activities,
+        },
+      });
+    } catch (error) {
+      console.log("getActivityByIdController: ~ error: ", error);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't fetch activity",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  getActivityByIdController: async (req, res) => {
+    try {
+      const { id } = req.query;
+
+      const activity = await Activity.findById({ _id: id });
+      //   if no activity was found
+      if (!activity) {
+        return res.status(400).send({
+          success: false,
+          message: "ID didn't match an activity",
+          // errMessage: err.message,
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: `Fetched activity successfully`,
+        data: {
+          activity,
+        },
+      });
+    } catch (error) {
+      console.log("getActivityByIdController: ~ error: ", error);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't fetch activity",
+        // errMessage: err.message,
+      });
+    }
+  },
+
+  deleteActivityController: async (req, res) => {
+    try {
+      const { id } = req.query;
+
+      const activity = await Activity.findByIdAndDelete({ _id: id });
+
+      //   if no activity was found
+      if (!activity) {
+        return res.status(400).send({
+          success: false,
+          message: "ID didn't match an activity",
+          // errMessage: err.message,
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: `Deleted Activity: ${activity.name} successfully`,
+      });
+    } catch (error) {
+      console.log("deleteActivityController: ~ error: ", error);
+      return res.status(500).send({
+        success: false,
+        message: "Couldn't delete activity",
+        // errMessage: err.message,
+      });
+    }
+  },
   //   *
   //   **
   //   ***

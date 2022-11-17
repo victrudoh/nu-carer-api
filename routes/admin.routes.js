@@ -39,11 +39,28 @@ router.post(
 router.delete("/resident/delete", admin.deleteResidentController);
 router.get("/resident/assign", admin.getAssignCaregiverController);
 // careplan
-router.post("/resident/add-careplan", admin.postCreateCarePlanController);
-router.put("/resident/edit-careplan", admin.putEditCarePlanController);
-router.delete("/resident/delete-careplan", admin.deleteCareplanController);
+router.post(
+  "/resident/add-careplan-activity",
+  admin.postAddActivityToCarePlanController
+);
+router.put("/resident/edit-careplan-activity", admin.putEditCarePlanController);
+router.delete(
+  "/resident/delete-careplan-activity",
+  admin.deleteCareplanController
+);
 router.get("/resident/careplan", admin.getCareplanActivitiesController);
 
+//   *
+//   **
+//   ***
+//   **
+//   *
+// ACTIVITIES FOR CAREPLAN
+router.get("/activity/all", admin.getAllActivityController);
+router.get("/activity/one", admin.getActivityByIdController);
+router.post("/activity/add", admin.postCreateActivityController);
+router.put("/activity/edit", admin.putEditActivityController);
+router.delete("/activity/delete", admin.deleteActivityController);
 //   *
 //   **
 //   ***

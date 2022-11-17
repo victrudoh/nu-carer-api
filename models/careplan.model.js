@@ -12,17 +12,16 @@ const careplanSchema = new Schema(
       required: true,
       ref: "Resident",
     },
-    activity: {
-      type: String,
-      default: "No activity stated",
+    activityId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Activity",
     },
     assessment: {
       type: String,
-      default: "No assessment provided",
     },
     comment: {
       type: String,
-      default: "No comment available",
     },
     dateCreated: {
       type: String,
