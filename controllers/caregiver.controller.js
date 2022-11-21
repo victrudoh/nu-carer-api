@@ -169,4 +169,33 @@ module.exports = {
       });
     }
   },
+
+  // Find residents assignrd to
+  getAssignedResidentsController: async (req, res) => {
+    try {
+      const { id } = req.query;
+      const residents = await Resident.find({ caregiverId: id });
+
+      if (!residents) {
+        return res.status(400).send({
+          success: false,
+          message: "No residents were assiged to you",
+          // errMessage: err.message,
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: `Fetced all residets assigned to you`,
+        data: {
+          residents,
+        },
+      });
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: caregiver.controller.js ~ line 178 ~ getAssignedResidentsController: ~ error",
+        error
+      );
+    }
+  },
 };

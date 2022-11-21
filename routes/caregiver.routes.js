@@ -14,5 +14,6 @@ router.get("/ping", caregiver.getPingController);
 router.post("/login", caregiver.postCaregiverLoginController);
 router.get("/check-in", caregiver.getcheckInController);
 router.get("/check-out", caregiver.getcheckOutController);
+router.get("/residents", caregiver.getAssignedResidentsController);
 
 module.exports = router;

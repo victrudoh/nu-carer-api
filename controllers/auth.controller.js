@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 // Models
 const Admin = require("../models/admin.model");
+const Caregiver = require("../models/caregiver.model");
 
 // Middlewares
 const {
@@ -51,6 +52,7 @@ module.exports = {
 
       //   check if userName exist
       const userNameExists = await Admin.findOne({ userName: userName });
+
       if (userNameExists) {
         return res.status(400).send({
           success: false,
@@ -102,24 +104,51 @@ module.exports = {
       // const { error } = await loginValidation.validateAsync(req.body);
       // if (error) return res.status(400).send(error.details[0].message);
 
-      //   check if user exist
-      const user = await Admin.findOne({ email: email });
-      console.log("user", user);
+      //   check if user exist as admin
+      const admin = await Admin.findOne({ email: email });
 
-      if (!user) return res.status(400).send("Invalid email or password");
+      // if user not found under admin, check caregivers
+      if (!admin) {
+        // check if user exist as caregiver
+        const caregiver = await Caregiver.findOne({ email: email });
+        if (!caregiver) {
+          return res.status(400).send("Invalid email or password");
+        }
+
+        // If user exists as caregiver...validate password and continue
+        const validatePassword = await bcrypt.compare(
+          password,
+          caregiver.password
+        );
+
+        if (!validatePassword)
+          return res.status(400).send("Invalid email or password");
+
+        //   Generate JWT Token
+        const token = jwt.sign({ _id: caregiver._id }, process.env.JWT_SECRET);
+
+        return res.status(200).send({
+          success: true,
+          data: {
+            user: caregiver,
+            token: token,
+          },
+          message: "Login successful",
+        });
+      }
 
       // validate password
-      const validatePassword = await bcrypt.compare(password, user.password);
+      const validatePassword = await bcrypt.compare(password, admin.password);
       if (!validatePassword)
         return res.status(400).send("Invalid email or password");
 
       //   Generate JWT Token
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET);
 
       return res.status(200).send({
         success: true,
         data: {
-          user: user,
+          user: admin,
           token: token,
         },
         message: "Login successful",

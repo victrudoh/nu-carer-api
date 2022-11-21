@@ -14,7 +14,7 @@ const router = express.Router();
 
 // Routes
 router.get("/ping", admin.getPingController);
-router.get("/active", admin.getActiveAdminController);
+router.get("/active", admin.getActiveUserController);
 
 //   *
 //   **
@@ -23,19 +23,11 @@ router.get("/active", admin.getActiveAdminController);
 //   *
 
 // RESIDENTS
-router.post(
-  "/resident/add",
-  multerUploads.single("media"),
-  admin.postCreateResidentController
-);
+router.post("/resident/add", admin.postCreateResidentController);
 router.get("/resident/one", admin.getResidentByIdController);
 router.get("/resident/all", admin.getAllResidentsController);
 
-router.post(
-  "/resident/edit",
-  multerUploads.single("media"),
-  admin.postEditResidentController
-);
+router.post("/resident/edit", admin.postEditResidentController);
 router.delete("/resident/delete", admin.deleteResidentController);
 router.get("/resident/assign", admin.getAssignCaregiverController);
 // careplan
@@ -68,18 +60,10 @@ router.delete("/activity/delete", admin.deleteActivityController);
 //   *
 
 // CAREGIVERS
-router.post(
-  "/caregiver/add",
-  multerUploads.single("media"),
-  admin.postCreateCaregiverController
-);
+router.post("/caregiver/add", admin.postCreateCaregiverController);
 router.get("/caregiver/one", admin.getCaregiverByIdController);
 router.get("/caregiver/all", admin.getAllCaregiversController);
-router.post(
-  "/caregiver/edit",
-  multerUploads.single("media"),
-  admin.postEditCaregiverController
-);
+router.post("/caregiver/edit", admin.postEditCaregiverController);
 router.delete("/caregiver/delete", admin.deleteCaregiverController);
 router.get("/caregiver/timesheet", admin.getTimesheetController);
 router.get("/caregiver/report", admin.getSummaryReportController);

@@ -37,27 +37,37 @@ module.exports = {
   },
 
   // Get active admin
-  getActiveAdminController: async (req, res, next) => {
+  getActiveUserController: async (req, res, next) => {
     try {
       const { id } = req.query;
 
-      //   check if user exist
+      //   check if user exist as admin
       const admin = await Admin.findOne({ _id: id });
-      console.log(
-        "🚀 ~ file: admin.controller.js ~ line 44 ~ getActiveAdminController: ~ admin",
-        admin
-      );
 
-      if (!admin)
-        return res.status(400).send({
-          success: false,
-          message: "Couldn't fetch Admin",
+      if (!admin) {
+        //   check if user exist as caregiver
+        const caregiver = await Caregiver.findOne({ _id: id });
+
+        if (!caregiver) {
+          return res.status(400).send({
+            success: false,
+            message: "Couldn't fetch User",
+          });
+        }
+
+        return res.status(200).send({
+          success: true,
+          data: {
+            user: caregiver,
+          },
+          message: "Fetched active admin",
         });
+      }
 
       return res.status(200).send({
         success: true,
         data: {
-          admin: admin,
+          user: admin,
         },
         message: "Fetched active admin",
       });
