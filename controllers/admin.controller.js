@@ -213,7 +213,7 @@ module.exports = {
   },
 
   // edit resident
-  postEditResidentController: async (req, res, next) => {
+  putEditResidentController: async (req, res, next) => {
     try {
       const { id } = req.query;
       const { name, age, phone, address, gender, zipCode, media } = req.body;
@@ -324,7 +324,7 @@ module.exports = {
         activityId: activityId,
       });
       if (foundActivity) {
-        return res.status(400).send({
+        return res.status(420).send({
           success: false,
           message: "This activity already exists for this resident",
           // errMessage: err.message,

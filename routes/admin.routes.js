@@ -27,7 +27,7 @@ router.post("/resident/add", admin.postCreateResidentController);
 router.get("/resident/one", admin.getResidentByIdController);
 router.get("/resident/all", admin.getAllResidentsController);
 
-router.post("/resident/edit", admin.postEditResidentController);
+router.put("/resident/edit", admin.putEditResidentController);
 router.delete("/resident/delete", admin.deleteResidentController);
 router.get("/resident/assign", admin.getAssignCaregiverController);
 // careplan
