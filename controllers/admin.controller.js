@@ -324,7 +324,7 @@ module.exports = {
         activityId: activityId,
       });
       if (foundActivity) {
-        return res.status(420).send({
+        return res.status(422).send({
           success: false,
           message: "This activity already exists for this resident",
           // errMessage: err.message,
