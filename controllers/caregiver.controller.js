@@ -85,6 +85,18 @@ module.exports = {
         .tz("Africa/Lagos")
         .format("YYYY-MM-DD HH:mm:SS");
 
+      const foundSession = await Timesheet.findOne({
+        checkInDate: checkInDate.split(" ")[0],
+      });
+
+      if (foundSession) {
+        return res.status(401).send({
+          success: false,
+          message: "You have checked in today already",
+          // errMessage: err.message,
+        });
+      }
+
       const timesheet = new Timesheet({
         caregiverId: caregiver.id,
         checkInDate: checkInDate.split(" ")[0],
@@ -135,7 +147,7 @@ module.exports = {
 
       //  if no date, bring back error 400, You haven't checked in today, please check in
       if (!foundSession) {
-        return res.status(400).send({
+        return res.status(401).send({
           success: false,
           message: "You haven't checked in today, please check in",
           // errMessage: err.message,
@@ -144,7 +156,7 @@ module.exports = {
 
       //   if already checked out
       if (foundSession.checkOutDate !== "not-checked-out") {
-        return res.status(400).send({
+        return res.status(401).send({
           success: false,
           message: "You have already checked out today",
           // errMessage: err.message,
@@ -186,7 +198,7 @@ module.exports = {
 
       return res.status(200).send({
         success: true,
-        message: `Fetced all residets assigned to you`,
+        message: `Fetced all residents assigned to you`,
         data: {
           residents,
         },

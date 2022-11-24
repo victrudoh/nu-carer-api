@@ -60,7 +60,7 @@ module.exports = {
           data: {
             user: caregiver,
           },
-          message: "Fetched active admin",
+          message: "Fetched active user",
         });
       }
 
@@ -69,7 +69,7 @@ module.exports = {
         data: {
           user: admin,
         },
-        message: "Fetched active admin",
+        message: "Fetched active user",
       });
     } catch (err) {
       console.log(
@@ -324,7 +324,7 @@ module.exports = {
         activityId: activityId,
       });
       if (foundActivity) {
-        return res.status(422).send({
+        return res.status(400).send({
           success: false,
           message: "This activity already exists for this resident",
           // errMessage: err.message,
