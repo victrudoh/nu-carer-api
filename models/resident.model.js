@@ -14,19 +14,35 @@ const residentSchema = new Schema({
         type: Number,
         required: true,
     },
-    phone: {
+    gender: {
         type: String,
+        required: true,
+    },
+    dateAdmitted: {
+        type: Date,
         required: true,
     },
     address: {
         type: String,
         required: true,
     },
-    gender: {
+    nextOfKin: {
         type: String,
         required: true,
     },
-    zipCode: {
+    gPName: {
+        type: String,
+        required: true,
+    },
+    gPphone: {
+        type: String,
+        required: true,
+    },
+    healthCondition: {
+        type: String,
+        required: true,
+    },
+    hobbies: {
         type: String,
         required: true,
     },
