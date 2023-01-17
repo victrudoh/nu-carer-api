@@ -9,7 +9,7 @@ const Resident = require("../models/resident.model");
 const Caregiver = require("../models/caregiver.model");
 const Careplan = require("../models/careplan.model");
 const Timesheet = require("../models/timesheet.model");
-const Report = require("../models/Report.model");
+const Report = require("../models/report.model");
 
 module.exports = {
     //   Test API connection
