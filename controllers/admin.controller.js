@@ -109,7 +109,7 @@ module.exports = {
 
             // date
             const dateCreated = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             // create resident
@@ -235,7 +235,7 @@ module.exports = {
 
             // date
             const dateModified = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             const resident = await Resident.findById({ _id: id });
@@ -337,7 +337,7 @@ module.exports = {
 
             // date
             const dateCreated = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             // save
@@ -401,7 +401,7 @@ module.exports = {
 
             // date
             const dateModified = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             foundActivity.assessment = assessment;
@@ -713,7 +713,7 @@ module.exports = {
 
             // date
             const dateCreated = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             // create caregiver
@@ -827,7 +827,7 @@ module.exports = {
 
             // date
             const dateModified = moment()
-                .tz("Africa/Lagos")
+                .tz("Europe/London")
                 .format("YYYY-MM-DD HH:mm:SS");
 
             const caregiver = await Caregiver.findById({ _id: id });
