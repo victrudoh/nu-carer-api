@@ -42,6 +42,10 @@ const residentSchema = new Schema({
         type: String,
         required: true,
     },
+    medication: {
+        type: String,
+        required: true,
+    },
     hobbies: {
         type: String,
         required: true,

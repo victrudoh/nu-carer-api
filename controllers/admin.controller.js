@@ -103,6 +103,7 @@ module.exports = {
                 gPName,
                 gPphone,
                 healthCondition,
+                medication,
                 hobbies,
                 media,
             } = req.body;
@@ -123,6 +124,7 @@ module.exports = {
                 gPName,
                 gPphone,
                 healthCondition,
+                medication,
                 hobbies,
                 media,
                 dateCreated,
@@ -220,7 +222,20 @@ module.exports = {
     putEditResidentController: async(req, res, next) => {
         try {
             const { id } = req.query;
-            const { name, age, phone, address, gender, zipCode, media } = req.body;
+            const {
+                name,
+                age,
+                gender,
+                dateAdmitted,
+                address,
+                nextOfKin,
+                gPName,
+                gPphone,
+                healthCondition,
+                medication,
+                hobbies,
+                media,
+            } = req.body;
 
             // const { media } = req.file;
 
@@ -251,10 +266,15 @@ module.exports = {
 
             resident.name = name;
             resident.age = age;
-            resident.phone = phone;
-            resident.address = address;
             resident.gender = gender;
-            resident.zipCode = zipCode;
+            resident.dateAdmitted = dateAdmitted;
+            resident.address = address;
+            resident.nextOfKin = nextOfKin;
+            resident.gPName = gPName;
+            resident.gPphone = gPphone;
+            resident.healthCondition = healthCondition;
+            resident.medication = medication;
+            resident.hobbies = hobbies;
             resident.media = media;
             resident.dateModified = dateModified;
             await resident.save();
